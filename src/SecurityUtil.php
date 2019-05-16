@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by MOMOSEC.
- * User: thecastle <projectone@immomo.com>
+ * User: thecastle <https://github.com/IIComing>
  * Date: 2019/4/17
  * Time: 下午7:33
  */
@@ -10,11 +10,13 @@ namespace Security;
 use Security\DataSecurity\EncryptHelper;
 use Security\EncoderSecurity\EncoderSecurity;
 use Security\URLSecurity\URLSecurity;
+use Security\FileSecurity\FileSecurity;
 
 /**
  * @property EncoderSecurity $encoderSecurity
  * @property URLSecurity $urlSecurity
  * @property EncryptHelper $encryptHelper
+ * @property FileSecurity $fileSecurity
  **/
 class SecurityUtil
 {
@@ -71,6 +73,23 @@ class SecurityUtil
     }
 
 
+    /****************************************文件工具****************************************/
+    /**
+     * @return FileSecurity
+     */
+    public function getFileSecurity()
+    {
+        return new FileSecurity();
+    }
+
+    public function verifyUploadFile($file, $config)
+    {
+        $data=array('flag'=>false,'info'=>'上传失败！','ext'=>'');
+        if($config==null || $file==null){
+            return $data;
+        }
+        return $this->fileSecurity->uploadedFileVerification->verifyUploadFile($file, $config);
+    }
 
     /****************************************编码工具****************************************/
 
@@ -160,6 +179,9 @@ class SecurityUtil
      */
     public function verifyRedirectUrl($url, $white = array())
     {
+        if($url==null){
+            return false;
+        }
         return $this->urlSecurity->defenseAgainstRedirect->verifyRedirectUrl($url, $white);
     }
 
@@ -170,6 +192,9 @@ class SecurityUtil
      */
     public function verifySSRFURL($url)
     {
+        if($url==null){
+            return false;
+        }
         return $this->urlSecurity->defenseAgainstSSRF->verifySSRFURL($url);
     }
 
@@ -198,7 +223,6 @@ class SecurityUtil
      */
     public function aesEncrypt($data, $secret_key, $options = 0)
     {
-
         return $this->encryptHelper->aesEncryptHelper->encryptWithOpenssl($data, $secret_key, $options);
     }
 
@@ -250,7 +274,6 @@ class SecurityUtil
      */
     public function rsaPublicDecrypt($encrypted)
     {
-
         return $this->encryptHelper->rsaEncryptHelper->rsaPublicDecrypt($encrypted);
     }
 
